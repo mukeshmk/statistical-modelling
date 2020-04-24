@@ -47,9 +47,27 @@ View(comb_wine_df)
 wine_sa_sb_15 = filter(comb_wine_df, variety=='Sauvignon Blanc' & country == 'South Africa' & price == 15)
 View(wine_sa_sb_15)
 
+## set up ggplot for histogram and density plots
+wine_sa_pt <- ggplot(wine_sa_sb_15, aes(x = points, ..density..))
+## add histogram
+wine_sa_pt <- wine_sa_pt + geom_histogram(bins = 5, aes(alpha = 0.5, colour = "blue"),  show.legend = FALSE)
+wine_sa_pt <- wine_sa_pt + geom_density(fill = "pink", aes(alpha = 0.5),  show.legend = FALSE)
+wine_sa_pt <- wine_sa_pt + xlab("Wine Points") + ylab("density")
+wine_sa_pt <- wine_sa_pt + ggtitle("Distribution of Points for Sauvignon Blanc")
+wine_sa_pt
+
 # this filters the data as per Q1, Chardonnay Wine from Chile, Priced at $15
 wine_ch_ch_15 = filter(comb_wine_df, variety=='Chardonnay' & country == 'Chile' & price == 15)
 View(wine_ch_ch_15)
+
+## set up ggplot for histogram and density plots
+wine_ch_pt <- ggplot(wine_ch_ch_15, aes(x = points, ..density..))
+## add histogram
+wine_ch_pt <- wine_ch_pt + geom_histogram(bins = 5, aes(alpha = 0.5, colour = "blue"),  show.legend = FALSE)
+wine_ch_pt <- wine_ch_pt + geom_density(fill = "pink", aes(alpha = 0.5),  show.legend = FALSE)
+wine_ch_pt <- wine_ch_pt + xlab("Wine Points") + ylab("density")
+wine_ch_pt <- wine_ch_pt + ggtitle("Distribution of Points for Chardonnay")
+wine_ch_pt
 
 # combining the 2 data frames
 comb_wine = rbind(wine_ch_ch_15, wine_sa_sb_15)
@@ -57,12 +75,16 @@ comb_wine = rbind(wine_ch_ch_15, wine_sa_sb_15)
 ggplot(comb_wine) + geom_boxplot(aes(variety, points, fill = variety)) +
   geom_jitter(aes(variety, points, shape = variety))
 
+# apllying the func "mean" to points sorted by variety
 wine_means = tapply(comb_wine$points, comb_wine$variety, mean)
+# removed the non-existent varities (don't know how they are still there)
 wine_means[complete.cases(wine_means)]
 
+# apllying the func "median" to points sorted by variety
 wine_median = tapply(comb_wine$points, comb_wine$variety, median)
 wine_median[complete.cases(wine_median)]
 
+# apllying the func "sd" to points sorted by variety
 wine_sd = tapply(comb_wine$points, comb_wine$variety, sd)
 wine_sd[complete.cases(wine_sd)]
 
@@ -115,23 +137,29 @@ compare_2_gibbs <- function(y, ind, mu0 = 50, tau0 = 1/400, del0 = 0, gamma0 = 1
   return(mat_store)
 }
 
+# contains 5000 rows of 3 columns mu, del and tau (5000 x 3 matrix)
 fit <- compare_2_gibbs(comb_wine$points, as.factor(comb_wine$variety))
 
 plot(as.mcmc(fit))
 
+acf(fit)
+
 raftery.diag(as.mcmc(fit))
 
+# applying the func "mean" on each columns of the resultant matrix in fit
 apply(fit, 2, mean)
+# applying the func "sd" on each columns of the resultant matrix in fit
 apply(fit, 2, sd)
+
 ## easier to interpret standard deviation than precision
 mean(1/sqrt(fit[, 3])) 
 sd(1/sqrt(fit[, 3]))
 
 
-y1_sim <- rnorm(5000, fit[, 1] + fit[, 2], sd = 1/sqrt(fit[, 3]))
-y2_sim <- rnorm(5000, fit[, 1] - fit[, 2], sd = 1/sqrt(fit[, 3]))
+y1_sim <- rnorm(5000, mean = fit[, 1] + fit[, 2], sd = 1/sqrt(fit[, 3]))
+y2_sim <- rnorm(5000, mean = fit[, 1] - fit[, 2], sd = 1/sqrt(fit[, 3]))
 
-ggplot(data.frame(y_sim_diff = y1_sim - y2_sim)) + stat_bin(aes(y_sim_diff))
+ggplot(data.frame(y_sim_diff = y1_sim - y2_sim)) + stat_bin(aes(y_sim_diff), binwidth = 10)
 
 mean(y1_sim > y2_sim)
 mean(y2_sim > y1_sim)
