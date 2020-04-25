@@ -56,7 +56,7 @@ wine_sa_pt <- wine_sa_pt + xlab("Wine Points") + ylab("density")
 wine_sa_pt <- wine_sa_pt + ggtitle("Distribution of Points for Sauvignon Blanc")
 wine_sa_pt
 
-# this filters the data as per Q1, Chardonnay Wine from Chile, Priced at $15
+# this filters the data as per Q1a, Chardonnay Wine from Chile, Priced at $15
 wine_ch_ch_15 = filter(comb_wine_df, variety=='Chardonnay' & country == 'Chile' & price == 15)
 View(wine_ch_ch_15)
 
