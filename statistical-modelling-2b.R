@@ -22,15 +22,45 @@ wine_df = within(wine_df, remove('province', 'region_1', 'region_2', 'winery', '
 View(wine_df)
 
 # this filters the data as per Q1b, Italian Wine, Priced less than $20 with regions which have at least 4 reviews
-wine_us = filter(wine_df, country == 'US' & price < 1000)
+wine_us = filter(wine_df, country == 'US' & price < 400)
 wine_us = na.omit(wine_us)
 wine_us = within(wine_us, remove('country'))
 View(wine_us)
 
 plot(wine_us)
 
-fit <- Mclust(wine_us)
+fit2 <- Mclust(wine_us)
 
 print(fit)
 summary(fit)
 plot(fit, what = "classification")
+
+print(fit2)
+summary(fit2)
+plot(fit2, what = "classification")
+plot(fit2, what = "BIC")
+fit2$BIC
+
+fit3 <- Mclust(wine_us, G = 8, modelNames = "VVV")
+print(fit3)
+summary(fit3)
+plot(fit3, what = "classification")
+plot(fit3, what = "uncertainty")
+
+fit4 <- Mclust(wine_us, G = 8, modelNames = "VVE")
+print(fit4)
+summary(fit4)
+plot(fit4, what = "classification")
+plot(fit4, what = "uncertainty")
+
+fit5 <- Mclust(wine_us, G = 7, modelNames = "VVV")
+print(fit5)
+summary(fit5)
+plot(fit5, what = "classification")
+plot(fit5, what = "uncertainty")
+
+fit6 <- Mclust(wine_us, G = 7, modelNames = "VVV", prior = priorControl())
+print(fit6)
+summary(fit6)
+plot(fit6, what = "classification")
+plot(fit6, what = "uncertainty")
