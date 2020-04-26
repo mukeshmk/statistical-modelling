@@ -22,29 +22,8 @@ wine_df = within(wine_df, remove('province', 'region_1', 'region_2', 'winery'))
 # where X = {country, price and variety} and Y = points
 View(wine_df)
 
-# The winemag-data_first150k.csv
-# This dataset has the following colummns in this order
-# country, description, designation, points, price, province,
-# region_1, region_2, variety, winery
-
-wine2_df = read.csv('data/winemag-data_first150k.csv')
-
-# definitely unwanted variables for the modelling
-wine2_df = within(wine2_df, remove('X', 'description', 'designation'))
-
-# these variables might be useful in the future, but ignorning them for now.
-wine2_df = within(wine2_df, remove('province', 'region_1', 'region_2', 'winery'))
-
-# currently the data frame contains the following columns "country, points, price and variety" in this order
-# where X = {country, price and variety} and Y = points
-View(wine2_df)
-
-# combining both the data frames
-comb_wine_df = rbind(wine_df, wine2_df)
-View(comb_wine_df)
-
 # this filters the data as per Q1, Sauvignon Blanc Wine from South Africa, Priced at $15
-wine_sa_sb_15 = filter(comb_wine_df, variety=='Sauvignon Blanc' & country == 'South Africa' & price == 15)
+wine_sa_sb_15 = filter(wine_df, variety=='Sauvignon Blanc' & country == 'South Africa' & price == 15)
 View(wine_sa_sb_15)
 
 ## set up ggplot for histogram and density plots
@@ -57,7 +36,7 @@ wine_sa_pt <- wine_sa_pt + ggtitle("Distribution of Points for Sauvignon Blanc")
 wine_sa_pt
 
 # this filters the data as per Q1a, Chardonnay Wine from Chile, Priced at $15
-wine_ch_ch_15 = filter(comb_wine_df, variety=='Chardonnay' & country == 'Chile' & price == 15)
+wine_ch_ch_15 = filter(wine_df, variety=='Chardonnay' & country == 'Chile' & price == 15)
 View(wine_ch_ch_15)
 
 ## set up ggplot for histogram and density plots
