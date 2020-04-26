@@ -22,8 +22,12 @@ wine_df = within(wine_df, remove('province', 'region_2', 'winery'))
 # where X = {country, price and variety} and Y = points
 View(wine_df)
 
+# this sqldf provides a list of unique region_1 in Italy and there count in the dataset.
+region_count <- sqldf("SELECT region_1, count(*) FROM wine_it_lt20 GROUP BY region_1")
+sum(region_count$`count(*)`)
+
 # this filters the data as per Q1b, Italian Wine, Priced less than $20 with regions which have at least 4 reviews
-wine_it_lt20 = filter(wine_df, country == 'Italy' & price < 20)
+wine_it_lt20 = filter(wine_df, country == 'Italy' & price < 20 & region_1 != "")
 wine_regs <- sqldf("SELECT region_1, count(*) FROM wine_it_lt20 GROUP BY region_1 HAVING count(*) > 4")$region_1
 wine_it_lt20 = wine_it_lt20[wine_it_lt20$region_1 %in% wine_regs, ]
 wine_it_lt20 = na.omit(wine_it_lt20)
@@ -34,7 +38,7 @@ total_wine_avg <- mean(wine_it_lt20$points)
 wine_it_lt20$region_1 <- factor(wine_it_lt20$region_1)
 region_split<-split(wine_it_lt20, wine_it_lt20$region_1)
 
-mat_wine_reg <- matrix(0, nrow = 142, ncol = 2)
+mat_wine_reg <- matrix(0, nrow = 141, ncol = 2)
 
 i <- 0
 for(reg in region_split) {
@@ -45,7 +49,7 @@ colnames(mat_wine_reg) <- c("region_1", "avg_points")
 View(mat_wine_reg)
 
 wine_gr_avg <- tibble(region = "", mean = "")
-for(i in 1:142) {
+for(i in 1:141) {
   if (mat_wine_reg[i,2] > total_wine_avg) {
     wine_gr_avg <- rbind(wine_gr_avg, c(mat_wine_reg[i,1], mat_wine_reg[i,2]))
   }
