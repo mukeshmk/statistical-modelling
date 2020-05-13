@@ -109,8 +109,7 @@ compare_m_gibbs <- function(y, ind, mu0 = 50, tau0 = 1/400,
   return(list(params = mat_store, theta = theta_mat))
 }
 
-fit1 <- compare_m_gibbs(wine_it_lt20$points, as.factor(as.numeric(wine_it_lt20$region_1)), maxiter = 10000)
-fit2 <- fit1[ 2 * (1 : 5000), ]
+fit2 <- compare_m_gibbs(wine_it_lt20$points, as.factor(as.numeric(wine_it_lt20$region_1)), maxiter = 10000)
 
 apply(fit2$params, 2, mean)
 

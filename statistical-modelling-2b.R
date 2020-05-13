@@ -48,8 +48,16 @@ fit1$parameters$mean
 fit1$parameters$pro
 
 toy_data <- wine_us
-toy_data <- toy_data+rnorm(n = nrow(toy_data), sd = 0.1)
+toy_data <- toy_data + rnorm(n = nrow(wine_us), sd = 0.1)
+toy_data <- toy_data[c("price", "points")]
 plot(toy_data)
+fit_toy <- Mclust(toy_data)
+summary(fit_toy)
+plot(fit_toy, what = "classification")
+
+toy_data2 <- apply(wine_us, 2, scale)
+toy_data2 <- toy_data2 + rnorm(n = nrow(wine_us), sd = 0.1)
+plot(toy_data2)
 
 fit1_1 <- Mclust(toy_data)
 plot(fit1_1, what = "classification")
@@ -60,7 +68,7 @@ BIC <- mclustBIC(wine_us)
 plot(BIC)
 summary(BIC)
 
-fit2 <- Mclust(wine_us, G = 9, modelNames = "VVE")
+fit2 <- Mclust(wine_us, G = 7, modelNames = "VVV")
 print(fit2)
 summary(fit2)
 plot(fit2, what = "classification")
@@ -72,7 +80,7 @@ summary(fit3)
 plot(fit3, what = "classification")
 plot(fit3, what = "uncertainty")
 
-fit4 <- Mclust(wine_us, G = 6, modelNames = "VVV")
+fit4 <- Mclust(wine_us, G = 9, modelNames = "VVI")
 print(fit4)
 summary(fit4)
 plot(fit4, what = "classification")
