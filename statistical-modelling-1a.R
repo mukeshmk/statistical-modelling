@@ -22,6 +22,9 @@ wine_df = within(wine_df, remove('province', 'region_1', 'region_2', 'winery'))
 # where X = {country, price and variety} and Y = points
 View(wine_df)
 
+mean(wine_df$points)
+sd(wine_df$points)
+
 # this filters the data as per Q1, Sauvignon Blanc Wine from South Africa, Priced at $15
 wine_sa_sb_15 = filter(wine_df, variety=='Sauvignon Blanc' & country == 'South Africa' & price == 15)
 View(wine_sa_sb_15)
@@ -67,9 +70,14 @@ wine_sd[complete.cases(wine_sd)]
 
 t.test(points ~ variety, data=comb_wine, var.equal = TRUE)
 
+ts = replicate(1000,t.test(points ~ variety, data=comb_wine, var.equal = TRUE)$statistic)
+range(ts)
+pts = seq(-4.5,4.5,length=100)
+plot(pts,dt(pts,df=18),col='red',type='l')
+lines(density(ts))
 
-compare_2_gibbs <- function(y, ind, mu0 = 50, tau0 = 1/400, del0 = 0, gamma0 = 1/400, 
-                            a0 = 1, b0 = 50, maxiter = 5000)
+compare_2_gibbs <- function(y, ind, mu0 = 88.44714, tau0 = 1/(3.03973^2), del0 = 0, gamma0 = 1/(3.03973^2),
+                            a0 = 1, b0 = 50, maxiter = 10000)
 {
   y1 <- y[ind == 'Chardonnay']
   y2 <- y[ind == 'Sauvignon Blanc']
@@ -115,7 +123,8 @@ compare_2_gibbs <- function(y, ind, mu0 = 50, tau0 = 1/400, del0 = 0, gamma0 = 1
 }
 
 # contains 5000 rows of 3 columns mu, del and tau (5000 x 3 matrix)
-fit <- compare_2_gibbs(comb_wine$points, as.factor(comb_wine$variety))
+fit1 <- compare_2_gibbs(comb_wine$points, as.factor(comb_wine$variety), maxiter = 20000)
+fit <- fit1[ 4 * (1 : 5000), ]
 
 plot(as.mcmc(fit))
 
