@@ -23,10 +23,16 @@ View(wine_df)
 
 # this filters the data as per Q2-b - US Wine
 # additionally filtering it to price less than 400 so as to avoid outliers
-wine_us = filter(wine_df, country == 'US' & price < 400)
+wine_us = filter(wine_df, country == 'US' & price < 100)
 wine_us = na.omit(wine_us)
 wine_us = within(wine_us, remove('country'))
 View(wine_us)
+
+wine_us <- wine_us[c("price", "points")]
+
+# not required
+# wine_us$price<-log(wine_us$price)
+# wine_us$points<-wine_us$points/wine_us$price
 
 # plot "points vs price" for wine in US
 plot(wine_us)
@@ -38,6 +44,17 @@ summary(fit1)
 plot(fit1, what = "classification")
 plot(fit1, what = "BIC")
 fit1$BIC
+fit1$parameters$mean
+fit1$parameters$pro
+
+toy_data <- wine_us
+toy_data <- toy_data+rnorm(n = nrow(toy_data), sd = 0.1)
+plot(toy_data)
+
+fit1_1 <- Mclust(toy_data)
+plot(fit1_1, what = "classification")
+fit1_1$parameters$mean
+fit1_1$parameters$pro
 
 BIC <- mclustBIC(wine_us)
 plot(BIC)
