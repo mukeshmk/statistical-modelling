@@ -109,7 +109,8 @@ compare_m_gibbs <- function(y, ind, mu0 = 50, tau0 = 1/400,
   return(list(params = mat_store, theta = theta_mat))
 }
 
-fit2 <- compare_m_gibbs(wine_it_lt20$points, as.factor(as.numeric(wine_it_lt20$region_1)))
+fit1 <- compare_m_gibbs(wine_it_lt20$points, as.factor(as.numeric(wine_it_lt20$region_1)), maxiter = 10000)
+fit2 <- fit1[ 2 * (1 : 5000), ]
 
 apply(fit2$params, 2, mean)
 
@@ -128,7 +129,11 @@ theta_hat <- apply(fit2$theta, 2, mean) ## get basic posterior summary
 names(theta_hat) <- wine_regs ## keep track of different schools
 sort(theta_hat, decreasing = TRUE) ## which schools did best and worst?
 
-sort(theta_hat, decreasing = TRUE) > mean(wine_it_lt20$points)
+mean(wine_it_lt20$points)
+
+abv_avg <- theta_hat[sort(theta_hat, decreasing = TRUE) > mean(wine_it_lt20$points)]
+
+sum(complete.cases(abv_avg))
 
 theta_ci <- apply(fit2$theta, 2, quantile, prob = c(0.025, .975)) ## upper/lower bounds for thetas
 df_error <- data.frame(lower = theta_ci[1, ], upper = theta_ci[2, ], mean = theta_hat, 
