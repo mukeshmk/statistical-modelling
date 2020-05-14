@@ -152,3 +152,4 @@ mean(y2_sim > y1_sim)
 
 ggplot(data.frame(y1_sim, y2_sim)) + geom_point(aes(y1_sim, y2_sim), alpha = 0.3) + 
   geom_abline(slope = 1, intercept = 0)
+
